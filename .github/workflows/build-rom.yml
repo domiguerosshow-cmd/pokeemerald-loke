@@ -1,0 +1,26 @@
+name: Build ROM
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pret/agbcc
+          path: agbcc
+      - name: Instalar herramientas
+        run: sudo apt-get update && sudo apt-get install -y build-essential binutils-arm-none-eabi gcc-arm-none-eabi libpng-dev
+      - name: Instalar agbcc
+        run: |
+          cd agbcc
+          ./build.sh
+          ./install.sh ../
+      - name: Compilar
+        run: make -j$(nproc)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pokeemerald-loke
+          path: pokeemerald.gba
